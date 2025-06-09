@@ -97,6 +97,30 @@ Each mood entry contains:
 - **Level 4 (🌤️)**: motivated, optimistic, grateful, excited, confident, social
 - **Level 5 (☀️)**: joyful, energetic, inspired, proud, accomplished, loved
 
+## 🔄 Updating the App
+
+Since this is a PWA with offline caching, you might need to refresh to get updates:
+
+### If you're not seeing the latest features:
+
+**Quick fix:**
+- Pull down to refresh in your mobile browser
+- Or close and reopen the browser tab
+
+**Clear cache (keeps your mood data safe):**
+
+**Android Chrome:**
+1. Chrome → Menu → Settings → Site settings → Storage
+2. Find mood.dmigo.me → Clear & reset
+3. Select only "Cached images and files" (keep "Cookies and site data" unchecked)
+
+**iPhone Safari:**
+1. Settings → Safari → Advanced → Website Data
+2. Find mood.dmigo.me and swipe left → Delete
+3. Or Safari → Hold refresh button → "Reload Without Content Blockers"
+
+**Your mood data is safe** - it's stored in LocalStorage, separate from the cache.
+
 ## 🔗 Live Demo
 
 Visit [mood.dmigo.me](https://mood.dmigo.me) to try the app!
