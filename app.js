@@ -174,7 +174,7 @@ class MoodTracker {
         localStorage.setItem('mood-tracker-data', JSON.stringify(moods));
         
         this.loadMoodHistory();
-        this.showSuccessMessage();
+        this.showSaveIndicator();
     }
 
     getMoods() {
@@ -240,42 +240,21 @@ class MoodTracker {
         return labels[mood - 1];
     }
 
-    showSuccessMessage() {
-        // Create a temporary success indicator
-        const moodScale = document.querySelector('.mood-scale');
-        const successMsg = document.createElement('div');
-        successMsg.textContent = '✓ Saved!';
-        successMsg.style.cssText = `
-            position: absolute;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #10B981;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        `;
+    showSaveIndicator() {
+        const saveIndicator = document.getElementById('save-indicator');
         
-        moodScale.style.position = 'relative';
-        moodScale.appendChild(successMsg);
+        // Show loading state
+        saveIndicator.className = 'save-indicator visible loading';
         
-        // Animate in
-        setTimeout(() => successMsg.style.opacity = '1', 10);
-        
-        // Remove after 2 seconds
+        // After short delay, show saved state
         setTimeout(() => {
-            successMsg.style.opacity = '0';
+            saveIndicator.className = 'save-indicator visible saved';
+            
+            // Hide after 2 seconds
             setTimeout(() => {
-                if (successMsg.parentNode) {
-                    successMsg.parentNode.removeChild(successMsg);
-                }
-            }, 300);
-        }, 1500);
+                saveIndicator.className = 'save-indicator hidden';
+            }, 2000);
+        }, 300);
     }
 
     updateTheme() {
