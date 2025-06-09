@@ -44,8 +44,10 @@ For deployment:
 
 ### Core Functionality
 - **Mood Rating**: 1-5 scale with weather-themed emoji interface (🌧️ ☁️ ⛅ 🌤️ ☀️)
+- **Thoughts & Notes**: Rich text input for daily reflections with auto-save (1-second debounce)
+- **Activity & Mood Tags**: Checkbox-style tags for activities (meditation, sports) and mood-specific descriptors
 - **Data Persistence**: LocalStorage for mood data (no backend required)
-- **Mood History**: View past entries sorted by date with mood labels
+- **Mood History**: View past entries sorted by date with mood labels, thoughts, and tags
 - **Date Navigation**: Navigate between dates with swipe gestures and arrow buttons
 - **Mood Updates**: Update/overwrite mood for any selected date
 - **Dual Views**: Today view for mood entry, History view for viewing past entries
@@ -68,6 +70,7 @@ For deployment:
 - **Dynamic Color Themes**: Background gradient changes based on current mood selection
 - **Weather-Based Mood Interface**: Each mood level corresponds to weather conditions
 - **Save Indicator**: Top-right corner with loading spinner (⟳) and success state (OK)
+- **Interactive Tags**: Neo-brutalist checkbox-style buttons (no checkbox symbols) with toggle states
 
 ### User Experience
 - **Touch Gestures**: Swipe left/right to navigate between dates
@@ -86,4 +89,7 @@ For deployment:
   - Very good: #f4d03f (bright yellow)
 - **Date Management**: Smart date display (Today, Yesterday, Tomorrow, X days ago/from now)
 - **State Management**: Tracks current date, selected mood, and view state
-- **Data Structure**: JSON objects with date, mood, and timestamp stored in localStorage
+- **Data Structure**: JSON objects with date, mood, thoughts, tags array, and timestamp stored in localStorage
+- **Tag System**: Mood-specific descriptors (6 tags per mood level) + core activities (meditation, sports)
+- **Custom 404 Page**: Branded redirect page for GitHub Pages that sends users back to main domain
+- **Date Logic**: Proper Math.ceil for both past and future date calculations for symmetrical timeline
