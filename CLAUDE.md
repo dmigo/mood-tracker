@@ -22,17 +22,15 @@ npm start
 # Server runs on http://localhost:3000
 ```
 
-For deployment to Vercel:
-```bash
-vercel --prod
-```
+For deployment:
+- **GitHub Pages**: Automatically deploys on push to main branch via GitHub Actions
 
 ## Architecture
 
 - **Frontend**: Vanilla HTML/CSS/JavaScript
 - **Storage**: LocalStorage for mood data persistence
 - **PWA Features**: Service worker for offline caching, web app manifest
-- **Deployment**: Static hosting (GitHub Pages, Vercel, Netlify)
+- **Deployment**: GitHub Pages (automated via GitHub Actions)
 
 ## Key Files
 
