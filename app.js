@@ -16,19 +16,14 @@ class MoodTracker {
 
     bindEvents() {
         const moodButtons = document.querySelectorAll('.mood-btn');
-        const saveButton = document.getElementById('save-mood');
         const prevDayBtn = document.getElementById('prev-day');
         const nextDayBtn = document.getElementById('next-day');
         const moodEntry = document.querySelector('.mood-entry');
 
         moodButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                this.selectMood(e.target.dataset.mood);
+                this.selectAndSaveMood(e.target.dataset.mood);
             });
-        });
-
-        saveButton.addEventListener('click', () => {
-            this.saveMood();
         });
 
         prevDayBtn.addEventListener('click', () => {
@@ -73,6 +68,20 @@ class MoodTracker {
         });
     }
 
+    selectAndSaveMood(mood) {
+        this.selectedMood = parseInt(mood);
+        
+        // Update UI
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        
+        document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
+        
+        // Auto-save immediately
+        this.saveMood();
+    }
+
     selectMood(mood) {
         this.selectedMood = parseInt(mood);
         
@@ -81,7 +90,6 @@ class MoodTracker {
         });
         
         document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
-        document.getElementById('save-mood').disabled = false;
     }
 
     navigateDate(direction) {
@@ -89,8 +97,8 @@ class MoodTracker {
         newDate.setDate(newDate.getDate() + direction);
         this.currentDate = newDate;
         this.updateDateDisplay();
-        this.checkSelectedDateMood();
         this.resetMoodSelection();
+        this.checkSelectedDateMood();
     }
 
     updateDateDisplay() {
@@ -146,9 +154,7 @@ class MoodTracker {
         localStorage.setItem('mood-tracker-data', JSON.stringify(moods));
         
         this.loadMoodHistory();
-        this.resetMoodSelection();
         this.showSuccessMessage();
-        this.checkSelectedDateMood();
     }
 
     getMoods() {
@@ -194,11 +200,6 @@ class MoodTracker {
         
         if (selectedDateMood) {
             this.selectMood(selectedDateMood.mood);
-            const today = new Date().toDateString();
-            const isToday = selectedDateString === today;
-            document.getElementById('save-mood').textContent = isToday ? 'Update Today\'s Mood' : 'Update Mood';
-        } else {
-            document.getElementById('save-mood').textContent = 'Save Mood';
         }
     }
 
@@ -207,7 +208,6 @@ class MoodTracker {
         document.querySelectorAll('.mood-btn').forEach(btn => {
             btn.classList.remove('selected');
         });
-        document.getElementById('save-mood').disabled = true;
     }
 
     getMoodEmoji(mood) {
@@ -221,15 +221,41 @@ class MoodTracker {
     }
 
     showSuccessMessage() {
-        const saveBtn = document.getElementById('save-mood');
-        const originalText = saveBtn.textContent;
-        saveBtn.textContent = '✓ Saved!';
-        saveBtn.style.background = '#10B981';
+        // Create a temporary success indicator
+        const moodScale = document.querySelector('.mood-scale');
+        const successMsg = document.createElement('div');
+        successMsg.textContent = '✓ Saved!';
+        successMsg.style.cssText = `
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10B981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        `;
         
+        moodScale.style.position = 'relative';
+        moodScale.appendChild(successMsg);
+        
+        // Animate in
+        setTimeout(() => successMsg.style.opacity = '1', 10);
+        
+        // Remove after 2 seconds
         setTimeout(() => {
-            saveBtn.textContent = originalText;
-            saveBtn.style.background = '';
-        }, 2000);
+            successMsg.style.opacity = '0';
+            setTimeout(() => {
+                if (successMsg.parentNode) {
+                    successMsg.parentNode.removeChild(successMsg);
+                }
+            }, 300);
+        }, 1500);
     }
 }
 
