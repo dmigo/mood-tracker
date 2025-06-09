@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4F46E5">
+    <meta name="description" content="Simple mood tracker PWA to log and view your daily mood">
+    
+    <title>Mood Tracker</title>
+    
+    <!-- PWA manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple PWA support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Mood Tracker">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌟 Mood Tracker</h1>
+            <p>How are you feeling today?</p>
+        </header>
+
+        <main>
+            <section class="mood-entry">
+                <h2>Rate Your Mood</h2>
+                <div class="mood-scale">
+                    <button class="mood-btn" data-mood="1">😢</button>
+                    <button class="mood-btn" data-mood="2">😔</button>
+                    <button class="mood-btn" data-mood="3">😐</button>
+                    <button class="mood-btn" data-mood="4">😊</button>
+                    <button class="mood-btn" data-mood="5">😄</button>
+                </div>
+                <div class="mood-labels">
+                    <span>Very Sad</span>
+                    <span>Sad</span>
+                    <span>Neutral</span>
+                    <span>Happy</span>
+                    <span>Very Happy</span>
+                </div>
+                <button id="save-mood" class="save-btn" disabled>Save Today's Mood</button>
+            </section>
+
+            <section class="mood-history">
+                <h2>Mood History</h2>
+                <div id="mood-list" class="mood-entries">
+                    <p class="no-entries">No mood entries yet. Start by rating your mood above!</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
