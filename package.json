@@ -1,0 +1,26 @@
+{
+  "name": "mood-tracker",
+  "version": "1.0.0",
+  "description": "Simple mood tracker PWA",
+  "main": "app.js",
+  "scripts": {
+    "dev": "serve -s . -l 3000",
+    "start": "serve -s . -l 3000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dmigo/mood-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dmigo/mood-tracker/issues"
+  },
+  "homepage": "https://github.com/dmigo/mood-tracker#readme",
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}

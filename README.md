@@ -4,10 +4,16 @@ Simple mood tracker PWA
 
 ## Development
 
+Install dependencies:
+
+```bash
+npm install
+```
+
 Start the development server:
 
 ```bash
-uv run --with httpserver python -m http.server 8000
+npm run dev
 ```
 
-Then open http://localhost:8000 in your browser.
+Then open http://localhost:3000 in your browser.

@@ -8,15 +8,18 @@ This is a mood tracker Progressive Web App (PWA) that allows users to log their 
 
 ## Development Commands
 
-This is a vanilla HTML/CSS/JavaScript PWA with no build process required. To develop:
+This is a vanilla HTML/CSS/JavaScript PWA with npm for dependency management and development server:
 
 ```bash
-# Serve locally (any HTTP server will work)
-uv run --with http-server http-server
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 # or
-python -m http.server 8000
-# or
-npx serve .
+npm start
+
+# Server runs on http://localhost:3000
 ```
 
 For deployment to Vercel:
