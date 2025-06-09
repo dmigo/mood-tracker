@@ -263,18 +263,39 @@ class MoodTracker {
         const selectedDateMood = moods.find(m => m.date === selectedDateString);
         
         let moodColor;
+        let moodValue;
         if (selectedDateMood && selectedDateMood.mood) {
             // Use the mood color from the saved mood
             moodColor = `var(--mood-${selectedDateMood.mood})`;
+            moodValue = selectedDateMood.mood;
         } else if (this.selectedMood) {
             // Use the currently selected mood color
             moodColor = `var(--mood-${this.selectedMood})`;
+            moodValue = this.selectedMood;
         } else {
             // No mood selected, use neutral color
             moodColor = 'var(--mood-unselected)';
+            moodValue = 3; // Default to neutral
         }
         
         document.documentElement.style.setProperty('--current-mood-color', moodColor);
+        
+        // Update large weather icon
+        const weatherIcon = document.getElementById('weather-bg-icon');
+        if (weatherIcon) {
+            if (selectedDateMood && selectedDateMood.mood) {
+                // Show icon for saved mood
+                weatherIcon.textContent = this.getMoodEmoji(moodValue);
+                weatherIcon.style.display = 'block';
+            } else if (this.selectedMood) {
+                // Show icon for currently selected mood
+                weatherIcon.textContent = this.getMoodEmoji(moodValue);
+                weatherIcon.style.display = 'block';
+            } else {
+                // Hide icon when no mood is selected
+                weatherIcon.style.display = 'none';
+            }
+        }
     }
 
     switchView(view) {
@@ -302,11 +323,15 @@ class MoodTracker {
             document.documentElement.style.setProperty('--current-mood-color', 'var(--mood-unselected)');
             // Hide bottom navigation in history view
             document.querySelector('.bottom-navigation').style.display = 'none';
+            // Hide weather icon in history view
+            document.getElementById('weather-bg-icon').style.display = 'none';
         } else {
             // In mood view, show theme based on selected date
             this.updateTheme();
             // Show bottom navigation in mood view
             document.querySelector('.bottom-navigation').style.display = 'block';
+            // Show weather icon in mood view
+            document.getElementById('weather-bg-icon').style.display = 'block';
         }
     }
 }

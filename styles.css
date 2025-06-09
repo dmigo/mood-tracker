@@ -43,6 +43,7 @@ body {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
+    padding-top: 90px;
 }
 
 header {
@@ -71,8 +72,10 @@ header p {
 .view-navigation {
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 70px;
     gap: 0;
+    position: relative;
+    z-index: 10;
 }
 
 .view-btn {
@@ -126,6 +129,8 @@ main {
     backdrop-filter: none;
     min-height: 400px;
     position: relative;
+    z-index: 10;
+    margin-top: 50px;
 }
 
 .view {
@@ -396,6 +401,7 @@ h3 {
 @media (max-width: 480px) {
     .container {
         padding: 15px;
+        padding-top: 70px;
     }
     
     header h1 {
@@ -459,6 +465,11 @@ h3 {
     main {
         border-width: 4px;
         box-shadow: 6px 6px 0px #000000;
+        margin-top: 30px;
+    }
+    
+    .view-navigation {
+        margin-bottom: 50px;
     }
 
     .mood-entry-item {
@@ -541,5 +552,28 @@ h3 {
     
     .save-indicator.saved .save-icon::before {
         font-size: 0.7rem;
+    }
+}
+
+/* Large Weather Background Icon */
+.weather-bg-icon {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    font-size: 12rem;
+    opacity: 1;
+    z-index: 1;
+    pointer-events: none;
+    transition: all 0.5s ease;
+    filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.1));
+    user-select: none;
+}
+
+@media (max-width: 480px) {
+    .weather-bg-icon {
+        font-size: 8rem;
+        top: 60px;
+        left: 15px;
+        opacity: 1;
     }
 }
