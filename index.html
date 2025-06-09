@@ -40,15 +40,6 @@
             <!-- Mood Entry View -->
             <section id="mood-view" class="view active">
                 <div class="mood-entry">
-                    <div class="date-navigation">
-                        <button id="prev-day" class="nav-btn" title="Previous day (swipe right)">◀</button>
-                        <div class="current-date">
-                            <h2 id="selected-date">Today</h2>
-                            <p id="date-display"></p>
-                        </div>
-                        <button id="next-day" class="nav-btn" title="Next day (swipe left)">▶</button>
-                    </div>
-                    
                     <div class="mood-entry-content">
                         <h3>Rate Your Mood</h3>
                         <div class="mood-scale">
@@ -72,6 +63,18 @@
                 </div>
             </section>
         </main>
+
+        <!-- Bottom Date Navigation -->
+        <div class="bottom-navigation">
+            <div class="date-navigation">
+                <button id="prev-day" class="nav-btn" title="Previous day (swipe right)">◀</button>
+                <div class="nav-date-info">
+                    <h2 id="selected-date">Today</h2>
+                    <p id="date-display"></p>
+                </div>
+                <button id="next-day" class="nav-btn" title="Next day (swipe left)">▶</button>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>

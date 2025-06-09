@@ -149,6 +149,7 @@ class MoodTracker {
             month: 'long',
             day: 'numeric'
         });
+        
     }
 
     saveMood() {
@@ -320,9 +321,13 @@ class MoodTracker {
         if (view === 'history') {
             // In history view, show neutral theme
             document.documentElement.style.setProperty('--current-mood-color', 'var(--mood-unselected)');
+            // Hide bottom navigation in history view
+            document.querySelector('.bottom-navigation').style.display = 'none';
         } else {
             // In mood view, show theme based on selected date
             this.updateTheme();
+            // Show bottom navigation in mood view
+            document.querySelector('.bottom-navigation').style.display = 'block';
         }
     }
 }
