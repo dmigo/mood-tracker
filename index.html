@@ -32,22 +32,33 @@
 
         <main>
             <section class="mood-entry">
-                <h2>Rate Your Mood</h2>
-                <div class="mood-scale">
-                    <button class="mood-btn" data-mood="1">😢</button>
-                    <button class="mood-btn" data-mood="2">😔</button>
-                    <button class="mood-btn" data-mood="3">😐</button>
-                    <button class="mood-btn" data-mood="4">😊</button>
-                    <button class="mood-btn" data-mood="5">😄</button>
+                <div class="date-navigation">
+                    <button id="prev-day" class="nav-btn" title="Previous day (swipe right)">◀</button>
+                    <div class="current-date">
+                        <h2 id="selected-date">Today</h2>
+                        <p id="date-display"></p>
+                    </div>
+                    <button id="next-day" class="nav-btn" title="Next day (swipe left)">▶</button>
                 </div>
-                <div class="mood-labels">
-                    <span>Very Sad</span>
-                    <span>Sad</span>
-                    <span>Neutral</span>
-                    <span>Happy</span>
-                    <span>Very Happy</span>
+                
+                <div class="mood-entry-content">
+                    <h3>Rate Your Mood</h3>
+                    <div class="mood-scale">
+                        <button class="mood-btn" data-mood="1">😢</button>
+                        <button class="mood-btn" data-mood="2">😔</button>
+                        <button class="mood-btn" data-mood="3">😐</button>
+                        <button class="mood-btn" data-mood="4">😊</button>
+                        <button class="mood-btn" data-mood="5">😄</button>
+                    </div>
+                    <div class="mood-labels">
+                        <span>Very Sad</span>
+                        <span>Sad</span>
+                        <span>Neutral</span>
+                        <span>Happy</span>
+                        <span>Very Happy</span>
+                    </div>
+                    <button id="save-mood" class="save-btn" disabled>Save Mood</button>
                 </div>
-                <button id="save-mood" class="save-btn" disabled>Save Today's Mood</button>
             </section>
 
             <section class="mood-history">

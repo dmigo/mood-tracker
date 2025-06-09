@@ -1,18 +1,25 @@
 class MoodTracker {
     constructor() {
         this.selectedMood = null;
+        this.currentDate = new Date();
+        this.swipeStartX = null;
+        this.swipeThreshold = 50;
         this.init();
     }
 
     init() {
         this.bindEvents();
+        this.updateDateDisplay();
         this.loadMoodHistory();
-        this.checkTodaysMood();
+        this.checkSelectedDateMood();
     }
 
     bindEvents() {
         const moodButtons = document.querySelectorAll('.mood-btn');
         const saveButton = document.getElementById('save-mood');
+        const prevDayBtn = document.getElementById('prev-day');
+        const nextDayBtn = document.getElementById('next-day');
+        const moodEntry = document.querySelector('.mood-entry');
 
         moodButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -22,6 +29,47 @@ class MoodTracker {
 
         saveButton.addEventListener('click', () => {
             this.saveMood();
+        });
+
+        prevDayBtn.addEventListener('click', () => {
+            this.navigateDate(-1);
+        });
+
+        nextDayBtn.addEventListener('click', () => {
+            this.navigateDate(1);
+        });
+
+        // Touch events for swipe
+        moodEntry.addEventListener('touchstart', (e) => {
+            this.swipeStartX = e.touches[0].clientX;
+        });
+
+        moodEntry.addEventListener('touchend', (e) => {
+            if (this.swipeStartX === null) return;
+            
+            const swipeEndX = e.changedTouches[0].clientX;
+            const swipeDistance = this.swipeStartX - swipeEndX;
+            
+            if (Math.abs(swipeDistance) > this.swipeThreshold) {
+                if (swipeDistance > 0) {
+                    // Swipe left = next day
+                    this.navigateDate(1);
+                } else {
+                    // Swipe right = previous day
+                    this.navigateDate(-1);
+                }
+            }
+            
+            this.swipeStartX = null;
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                this.navigateDate(-1);
+            } else if (e.key === 'ArrowRight') {
+                this.navigateDate(1);
+            }
         });
     }
 
@@ -36,19 +84,59 @@ class MoodTracker {
         document.getElementById('save-mood').disabled = false;
     }
 
+    navigateDate(direction) {
+        const newDate = new Date(this.currentDate);
+        newDate.setDate(newDate.getDate() + direction);
+        this.currentDate = newDate;
+        this.updateDateDisplay();
+        this.checkSelectedDateMood();
+        this.resetMoodSelection();
+    }
+
+    updateDateDisplay() {
+        const today = new Date();
+        const isToday = this.currentDate.toDateString() === today.toDateString();
+        const isYesterday = this.currentDate.toDateString() === new Date(today.getTime() - 24 * 60 * 60 * 1000).toDateString();
+        const isTomorrow = this.currentDate.toDateString() === new Date(today.getTime() + 24 * 60 * 60 * 1000).toDateString();
+        
+        let dateTitle = '';
+        if (isToday) {
+            dateTitle = 'Today';
+        } else if (isYesterday) {
+            dateTitle = 'Yesterday';
+        } else if (isTomorrow) {
+            dateTitle = 'Tomorrow';
+        } else {
+            const daysDiff = Math.floor((this.currentDate - today) / (24 * 60 * 60 * 1000));
+            if (daysDiff > 0) {
+                dateTitle = `${daysDiff} days from now`;
+            } else {
+                dateTitle = `${Math.abs(daysDiff)} days ago`;
+            }
+        }
+
+        document.getElementById('selected-date').textContent = dateTitle;
+        document.getElementById('date-display').textContent = this.currentDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
     saveMood() {
         if (!this.selectedMood) return;
 
-        const today = new Date().toDateString();
+        const selectedDateString = this.currentDate.toDateString();
         const moodData = {
-            date: today,
+            date: selectedDateString,
             mood: this.selectedMood,
-            timestamp: Date.now()
+            timestamp: this.currentDate.getTime()
         };
 
         let moods = this.getMoods();
         
-        const existingIndex = moods.findIndex(m => m.date === today);
+        const existingIndex = moods.findIndex(m => m.date === selectedDateString);
         if (existingIndex >= 0) {
             moods[existingIndex] = moodData;
         } else {
@@ -60,6 +148,7 @@ class MoodTracker {
         this.loadMoodHistory();
         this.resetMoodSelection();
         this.showSuccessMessage();
+        this.checkSelectedDateMood();
     }
 
     getMoods() {
@@ -98,14 +187,18 @@ class MoodTracker {
         }).join('');
     }
 
-    checkTodaysMood() {
-        const today = new Date().toDateString();
+    checkSelectedDateMood() {
+        const selectedDateString = this.currentDate.toDateString();
         const moods = this.getMoods();
-        const todaysMood = moods.find(m => m.date === today);
+        const selectedDateMood = moods.find(m => m.date === selectedDateString);
         
-        if (todaysMood) {
-            this.selectMood(todaysMood.mood);
-            document.getElementById('save-mood').textContent = 'Update Today\'s Mood';
+        if (selectedDateMood) {
+            this.selectMood(selectedDateMood.mood);
+            const today = new Date().toDateString();
+            const isToday = selectedDateString === today;
+            document.getElementById('save-mood').textContent = isToday ? 'Update Today\'s Mood' : 'Update Mood';
+        } else {
+            document.getElementById('save-mood').textContent = 'Save Mood';
         }
     }
 
@@ -115,7 +208,6 @@ class MoodTracker {
             btn.classList.remove('selected');
         });
         document.getElementById('save-mood').disabled = true;
-        document.getElementById('save-mood').textContent = 'Save Today\'s Mood';
     }
 
     getMoodEmoji(mood) {
