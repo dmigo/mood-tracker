@@ -12,6 +12,7 @@ class MoodTracker {
         this.updateDateDisplay();
         this.loadMoodHistory();
         this.checkSelectedDateMood();
+        this.updateTheme();
     }
 
     bindEvents() {
@@ -80,6 +81,9 @@ class MoodTracker {
         
         // Auto-save immediately
         this.saveMood();
+        
+        // Update theme
+        this.updateTheme();
     }
 
     selectMood(mood) {
@@ -99,6 +103,7 @@ class MoodTracker {
         this.updateDateDisplay();
         this.resetMoodSelection();
         this.checkSelectedDateMood();
+        this.updateTheme();
     }
 
     updateDateDisplay() {
@@ -211,7 +216,7 @@ class MoodTracker {
     }
 
     getMoodEmoji(mood) {
-        const emojis = ['😢', '😔', '😐', '😊', '😄'];
+        const emojis = ['🌧️', '☁️', '⛅', '🌤️', '☀️'];
         return emojis[mood - 1];
     }
 
@@ -256,6 +261,26 @@ class MoodTracker {
                 }
             }, 300);
         }, 1500);
+    }
+
+    updateTheme() {
+        const selectedDateString = this.currentDate.toDateString();
+        const moods = this.getMoods();
+        const selectedDateMood = moods.find(m => m.date === selectedDateString);
+        
+        let moodColor;
+        if (selectedDateMood && selectedDateMood.mood) {
+            // Use the mood color from the saved mood
+            moodColor = `var(--mood-${selectedDateMood.mood})`;
+        } else if (this.selectedMood) {
+            // Use the currently selected mood color
+            moodColor = `var(--mood-${this.selectedMood})`;
+        } else {
+            // No mood selected, use neutral color
+            moodColor = 'var(--mood-unselected)';
+        }
+        
+        document.documentElement.style.setProperty('--current-mood-color', moodColor);
     }
 }
 

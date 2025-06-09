@@ -1,3 +1,28 @@
+:root {
+  /* 5-Point Mood Scale Colors */
+  --mood-1: #4a90a4;       /* Very down - deep blue */
+  --mood-2: #6ba3b5;       /* Somewhat down - lighter blue */
+  --mood-3: #5ba05b;       /* Neutral - natural green */
+  --mood-4: #f6dc5a;       /* Pretty good - warm yellow */
+  --mood-5: #f4d03f;       /* Very good - bright yellow */
+  --mood-unselected: #e1e5e9; /* Unselected - light gray */
+  
+  /* Text Colors */
+  --text-primary: #2c3e50;
+  --text-secondary: #6c757d;
+  
+  /* Background */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  
+  /* Borders */
+  --border-light: #e9ecef;
+  --border-focus: rgba(0,0,0,0.2);
+
+  /* Dynamic theme color (changes based on mood) */
+  --current-mood-color: var(--mood-unselected);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,9 +31,10 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--current-mood-color) 0%, color-mix(in srgb, var(--current-mood-color) 70%, #000000) 100%);
     min-height: 100vh;
-    color: #333;
+    color: var(--text-primary);
+    transition: background 0.5s ease;
 }
 
 .container {
@@ -34,10 +60,11 @@ header p {
 }
 
 main {
-    background: white;
+    background: var(--bg-primary);
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
 }
 
 section {
@@ -70,37 +97,85 @@ h3 {
 }
 
 .mood-btn {
-    background: #f8f9fa;
-    border: 3px solid #e9ecef;
+    border: 4px solid #e9ecef;
     border-radius: 50%;
     width: 60px;
     height: 60px;
-    font-size: 2rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+.mood-btn[data-mood="1"] {
+    background: var(--mood-1);
+}
+
+.mood-btn[data-mood="2"] {
+    background: var(--mood-2);
+}
+
+.mood-btn[data-mood="3"] {
+    background: var(--mood-3);
+}
+
+.mood-btn[data-mood="4"] {
+    background: var(--mood-4);
+}
+
+.mood-btn[data-mood="5"] {
+    background: var(--mood-5);
 }
 
 .mood-btn:hover {
     transform: scale(1.1);
-    border-color: #4F46E5;
+    border-color: var(--text-primary);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .mood-btn.selected {
-    background: #4F46E5;
-    border-color: #4F46E5;
-    transform: scale(1.1);
+    border-color: var(--text-primary);
+    transform: scale(1.15);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-.mood-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    color: #666;
-    margin-bottom: 25px;
+.mood-btn[data-mood="1"].selected::after {
+    content: '🌧️';
+    position: absolute;
+    font-size: 1.8rem;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
 }
+
+.mood-btn[data-mood="2"].selected::after {
+    content: '☁️';
+    position: absolute;
+    font-size: 1.8rem;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+
+.mood-btn[data-mood="3"].selected::after {
+    content: '⛅';
+    position: absolute;
+    font-size: 1.8rem;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+
+.mood-btn[data-mood="4"].selected::after {
+    content: '🌤️';
+    position: absolute;
+    font-size: 1.8rem;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+
+.mood-btn[data-mood="5"].selected::after {
+    content: '☀️';
+    position: absolute;
+    font-size: 1.8rem;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+
 
 
 .mood-entries {
@@ -209,11 +284,14 @@ h3 {
     .mood-btn {
         width: 50px;
         height: 50px;
-        font-size: 1.5rem;
     }
     
-    .mood-labels {
-        font-size: 0.7rem;
+    .mood-btn[data-mood="1"].selected::after,
+    .mood-btn[data-mood="2"].selected::after,
+    .mood-btn[data-mood="3"].selected::after,
+    .mood-btn[data-mood="4"].selected::after,
+    .mood-btn[data-mood="5"].selected::after {
+        font-size: 1.4rem;
     }
 
     .nav-btn {
