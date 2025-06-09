@@ -4,6 +4,7 @@ class MoodTracker {
         this.currentDate = new Date();
         this.swipeStartX = null;
         this.swipeThreshold = 50;
+        this.currentView = 'mood';
         this.init();
     }
 
@@ -20,6 +21,8 @@ class MoodTracker {
         const prevDayBtn = document.getElementById('prev-day');
         const nextDayBtn = document.getElementById('next-day');
         const moodEntry = document.querySelector('.mood-entry');
+        const moodViewBtn = document.getElementById('mood-view-btn');
+        const historyViewBtn = document.getElementById('history-view-btn');
 
         moodButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -59,12 +62,23 @@ class MoodTracker {
             this.swipeStartX = null;
         });
 
+        // View navigation
+        moodViewBtn.addEventListener('click', () => {
+            this.switchView('mood');
+        });
+
+        historyViewBtn.addEventListener('click', () => {
+            this.switchView('history');
+        });
+
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') {
-                this.navigateDate(-1);
-            } else if (e.key === 'ArrowRight') {
-                this.navigateDate(1);
+            if (this.currentView === 'mood') {
+                if (e.key === 'ArrowLeft') {
+                    this.navigateDate(-1);
+                } else if (e.key === 'ArrowRight') {
+                    this.navigateDate(1);
+                }
             }
         });
     }
@@ -281,6 +295,35 @@ class MoodTracker {
         }
         
         document.documentElement.style.setProperty('--current-mood-color', moodColor);
+    }
+
+    switchView(view) {
+        this.currentView = view;
+        
+        // Update view buttons
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        if (view === 'mood') {
+            document.getElementById('mood-view-btn').classList.add('active');
+            document.getElementById('mood-view').classList.add('active');
+            document.getElementById('history-view').classList.remove('active');
+        } else if (view === 'history') {
+            document.getElementById('history-view-btn').classList.add('active');
+            document.getElementById('history-view').classList.add('active');
+            document.getElementById('mood-view').classList.remove('active');
+            this.loadMoodHistory(); // Refresh history when switching to it
+        }
+        
+        // Update theme based on current view
+        if (view === 'history') {
+            // In history view, show neutral theme
+            document.documentElement.style.setProperty('--current-mood-color', 'var(--mood-unselected)');
+        } else {
+            // In mood view, show theme based on selected date
+            this.updateTheme();
+        }
     }
 }
 

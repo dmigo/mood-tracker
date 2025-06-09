@@ -30,33 +30,45 @@
             <p>How are you feeling today?</p>
         </header>
 
+        <!-- Navigation -->
+        <nav class="view-navigation">
+            <button id="mood-view-btn" class="view-btn active">Today</button>
+            <button id="history-view-btn" class="view-btn">History</button>
+        </nav>
+
         <main>
-            <section class="mood-entry">
-                <div class="date-navigation">
-                    <button id="prev-day" class="nav-btn" title="Previous day (swipe right)">◀</button>
-                    <div class="current-date">
-                        <h2 id="selected-date">Today</h2>
-                        <p id="date-display"></p>
+            <!-- Mood Entry View -->
+            <section id="mood-view" class="view active">
+                <div class="mood-entry">
+                    <div class="date-navigation">
+                        <button id="prev-day" class="nav-btn" title="Previous day (swipe right)">◀</button>
+                        <div class="current-date">
+                            <h2 id="selected-date">Today</h2>
+                            <p id="date-display"></p>
+                        </div>
+                        <button id="next-day" class="nav-btn" title="Next day (swipe left)">▶</button>
                     </div>
-                    <button id="next-day" class="nav-btn" title="Next day (swipe left)">▶</button>
-                </div>
-                
-                <div class="mood-entry-content">
-                    <h3>Rate Your Mood</h3>
-                    <div class="mood-scale">
-                        <button class="mood-btn" data-mood="1"></button>
-                        <button class="mood-btn" data-mood="2"></button>
-                        <button class="mood-btn" data-mood="3"></button>
-                        <button class="mood-btn" data-mood="4"></button>
-                        <button class="mood-btn" data-mood="5"></button>
+                    
+                    <div class="mood-entry-content">
+                        <h3>Rate Your Mood</h3>
+                        <div class="mood-scale">
+                            <button class="mood-btn" data-mood="1"></button>
+                            <button class="mood-btn" data-mood="2"></button>
+                            <button class="mood-btn" data-mood="3"></button>
+                            <button class="mood-btn" data-mood="4"></button>
+                            <button class="mood-btn" data-mood="5"></button>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section class="mood-history">
-                <h2>Mood History</h2>
-                <div id="mood-list" class="mood-entries">
-                    <p class="no-entries">No mood entries yet. Start by rating your mood above!</p>
+            <!-- History View -->
+            <section id="history-view" class="view">
+                <div class="mood-history">
+                    <h2>Mood History</h2>
+                    <div id="mood-list" class="mood-entries">
+                        <p class="no-entries">No mood entries yet. Start by rating your mood!</p>
+                    </div>
                 </div>
             </section>
         </main>
