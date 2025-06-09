@@ -23,12 +23,26 @@ class MoodTracker {
     const moodEntry = document.querySelector(".mood-entry");
     const moodViewBtn = document.getElementById("mood-view-btn");
     const historyViewBtn = document.getElementById("history-view-btn");
+    const thoughtsInput = document.getElementById("thoughts-input");
 
     moodButtons.forEach((btn) => {
       btn.addEventListener("click", (e) => {
         this.selectAndSaveMood(e.target.dataset.mood);
       });
     });
+
+    // Auto-save thoughts when typing with debounce
+    if (thoughtsInput) {
+      let thoughtsTimeout;
+      thoughtsInput.addEventListener('input', () => {
+        if (this.selectedMood) {
+          clearTimeout(thoughtsTimeout);
+          thoughtsTimeout = setTimeout(() => {
+            this.saveMood();
+          }, 1000); // Save 1 second after stop typing
+        }
+      });
+    }
 
     prevDayBtn.addEventListener("click", () => {
       this.navigateDate(-1);
@@ -162,9 +176,13 @@ class MoodTracker {
     if (!this.selectedMood) return;
 
     const selectedDateString = this.currentDate.toDateString();
+    const thoughtsInput = document.getElementById('thoughts-input');
+    const thoughts = thoughtsInput ? thoughtsInput.value.trim() : '';
+    
     const moodData = {
       date: selectedDateString,
       mood: this.selectedMood,
+      thoughts: thoughts,
       timestamp: this.currentDate.getTime(),
     };
 
@@ -209,13 +227,20 @@ class MoodTracker {
           day: "numeric",
         });
 
+        const thoughtsDisplay = mood.thoughts 
+          ? `<div class="mood-entry-thoughts">${mood.thoughts}</div>` 
+          : '';
+
         return `
                 <div class="mood-entry-item">
-                    <span class="mood-entry-date">${date}</span>
-                    <div class="mood-entry-value">
-                        <span>${this.getMoodEmoji(mood.mood)}</span>
-                        <span>${this.getMoodLabel(mood.mood)}</span>
+                    <div class="mood-entry-header">
+                        <span class="mood-entry-date">${date}</span>
+                        <div class="mood-entry-value">
+                            <span>${this.getMoodEmoji(mood.mood)}</span>
+                            <span>${this.getMoodLabel(mood.mood)}</span>
+                        </div>
                     </div>
+                    ${thoughtsDisplay}
                 </div>
             `;
       })
@@ -229,6 +254,16 @@ class MoodTracker {
 
     if (selectedDateMood) {
       this.selectMood(selectedDateMood.mood);
+      this.loadThoughts(selectedDateMood.thoughts || '');
+    } else {
+      this.loadThoughts('');
+    }
+  }
+
+  loadThoughts(thoughts) {
+    const thoughtsInput = document.getElementById('thoughts-input');
+    if (thoughtsInput) {
+      thoughtsInput.value = thoughts;
     }
   }
 

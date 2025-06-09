@@ -276,9 +276,6 @@ h3 {
 }
 
 .mood-entry-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 15px;
     border: 3px solid #000000;
     border-radius: 0;
@@ -293,6 +290,23 @@ h3 {
 .mood-entry-item:hover {
     transform: translate(-2px, -2px);
     box-shadow: 6px 6px 0px #000000;
+}
+
+.mood-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.mood-entry-thoughts {
+    margin-top: 8px;
+    padding: 8px 0;
+    border-top: 2px solid #000000;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333333;
+    line-height: 1.4;
 }
 
 .mood-entry-date {
@@ -476,6 +490,11 @@ h3 {
         border-width: 2px;
         box-shadow: 3px 3px 0px #000000;
     }
+    
+    .mood-entry-thoughts {
+        font-size: 0.8rem;
+        border-top-width: 1px;
+    }
 
     .bottom-navigation {
         padding: 12px 15px;
@@ -575,5 +594,69 @@ h3 {
         top: 60px;
         left: 15px;
         opacity: 1;
+    }
+}
+
+/* Thoughts Section */
+.thoughts-section {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.thoughts-label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 900;
+    color: #000000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.thoughts-input {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 4px solid #000000;
+    border-radius: 0;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000000;
+    resize: vertical;
+    box-shadow: 4px 4px 0px #000000;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.thoughts-input:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #000000;
+    border-width: 5px;
+}
+
+.thoughts-input::placeholder {
+    color: #666666;
+    font-style: italic;
+    font-weight: 400;
+}
+
+@media (max-width: 480px) {
+    .thoughts-section {
+        margin-top: 25px;
+    }
+    
+    .thoughts-input {
+        min-height: 100px;
+        padding: 12px;
+        border-width: 3px;
+        box-shadow: 3px 3px 0px #000000;
+        font-size: 0.9rem;
+    }
+    
+    .thoughts-input:focus {
+        box-shadow: 5px 5px 0px #000000;
+        border-width: 4px;
     }
 }
