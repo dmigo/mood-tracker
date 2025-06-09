@@ -667,6 +667,7 @@ h3 {
     transform: translate(-2px, -2px);
     box-shadow: 6px 6px 0px #000000;
     border-width: 5px;
+    min-height: 240px;
 }
 
 .thoughts-input::placeholder {
@@ -691,6 +692,7 @@ h3 {
     .thoughts-input:focus {
         box-shadow: 5px 5px 0px #000000;
         border-width: 4px;
+        min-height: 200px;
     }
 }
 
