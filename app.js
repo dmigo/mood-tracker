@@ -34,7 +34,7 @@ class MoodTracker {
     // Auto-save thoughts when typing with debounce
     if (thoughtsInput) {
       let thoughtsTimeout;
-      thoughtsInput.addEventListener('input', () => {
+      thoughtsInput.addEventListener("input", () => {
         if (this.selectedMood) {
           clearTimeout(thoughtsTimeout);
           thoughtsTimeout = setTimeout(() => {
@@ -43,6 +43,18 @@ class MoodTracker {
         }
       });
     }
+
+    // Tag button click events (using event delegation)
+    document.addEventListener("click", (e) => {
+      if (e.target.classList.contains("tag-btn")) {
+        e.target.classList.toggle("selected");
+
+        // Auto-save if mood is selected
+        if (this.selectedMood) {
+          this.saveMood();
+        }
+      }
+    });
 
     prevDayBtn.addEventListener("click", () => {
       this.navigateDate(-1);
@@ -112,6 +124,9 @@ class MoodTracker {
 
     // Update theme
     this.updateTheme();
+
+    // Update mood-specific tags
+    this.updateMoodTags();
   }
 
   selectMood(mood) {
@@ -122,6 +137,9 @@ class MoodTracker {
     });
 
     document.querySelector(`[data-mood="${mood}"]`).classList.add("selected");
+
+    // Update mood-specific tags when selecting existing mood
+    this.updateMoodTags();
   }
 
   navigateDate(direction) {
@@ -176,13 +194,20 @@ class MoodTracker {
     if (!this.selectedMood) return;
 
     const selectedDateString = this.currentDate.toDateString();
-    const thoughtsInput = document.getElementById('thoughts-input');
-    const thoughts = thoughtsInput ? thoughtsInput.value.trim() : '';
-    
+    const thoughtsInput = document.getElementById("thoughts-input");
+    const thoughts = thoughtsInput ? thoughtsInput.value.trim() : "";
+
+    // Get selected tags
+    const selectedTags = [];
+    document.querySelectorAll(".tag-btn.selected").forEach((btn) => {
+      selectedTags.push(btn.dataset.tag);
+    });
+
     const moodData = {
       date: selectedDateString,
       mood: this.selectedMood,
       thoughts: thoughts,
+      tags: selectedTags,
       timestamp: this.currentDate.getTime(),
     };
 
@@ -227,9 +252,18 @@ class MoodTracker {
           day: "numeric",
         });
 
-        const thoughtsDisplay = mood.thoughts 
-          ? `<div class="mood-entry-thoughts">${mood.thoughts}</div>` 
-          : '';
+        const thoughtsDisplay = mood.thoughts
+          ? `<div class="mood-entry-thoughts">${mood.thoughts}</div>`
+          : "";
+
+        const tagsDisplay =
+          mood.tags && mood.tags.length > 0
+            ? `<div class="mood-entry-tags">
+               ${mood.tags
+                 .map((tag) => `<span class="mood-entry-tag">${tag}</span>`)
+                 .join("")}
+             </div>`
+            : "";
 
         return `
                 <div class="mood-entry-item">
@@ -241,6 +275,7 @@ class MoodTracker {
                         </div>
                     </div>
                     ${thoughtsDisplay}
+                    ${tagsDisplay}
                 </div>
             `;
       })
@@ -254,17 +289,34 @@ class MoodTracker {
 
     if (selectedDateMood) {
       this.selectMood(selectedDateMood.mood);
-      this.loadThoughts(selectedDateMood.thoughts || '');
+      this.loadThoughts(selectedDateMood.thoughts || "");
+      this.loadTags(selectedDateMood.tags || []);
     } else {
-      this.loadThoughts('');
+      this.loadThoughts("");
+      this.loadTags([]);
     }
   }
 
   loadThoughts(thoughts) {
-    const thoughtsInput = document.getElementById('thoughts-input');
+    const thoughtsInput = document.getElementById("thoughts-input");
     if (thoughtsInput) {
       thoughtsInput.value = thoughts;
     }
+  }
+
+  loadTags(tags) {
+    // Clear all selected tags first
+    document.querySelectorAll(".tag-btn").forEach((btn) => {
+      btn.classList.remove("selected");
+    });
+
+    // Select the saved tags
+    tags.forEach((tag) => {
+      const tagBtn = document.querySelector(`[data-tag="${tag}"]`);
+      if (tagBtn) {
+        tagBtn.classList.add("selected");
+      }
+    });
   }
 
   resetMoodSelection() {
@@ -282,6 +334,48 @@ class MoodTracker {
   getMoodLabel(mood) {
     const labels = ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"];
     return labels[mood - 1];
+  }
+
+  getMoodTags(mood) {
+    const moodTags = {
+      1: ["tired", "anxious", "sad", "hopeless", "overwhelmed", "lonely"],
+      2: ["stressed", "worried", "down", "frustrated", "bored", "irritated"],
+      3: ["calm", "okay", "peaceful", "focused", "balanced", "content"],
+      4: [
+        "motivated",
+        "optimistic",
+        "grateful",
+        "excited",
+        "confident",
+        "social",
+      ],
+      5: [
+        "joyful",
+        "energetic",
+        "inspired",
+        "proud",
+        "accomplished",
+        "loved",
+        "relaxed",
+      ],
+    };
+    return moodTags[mood] || [];
+  }
+
+  updateMoodTags() {
+    const moodTagsContainer = document.getElementById("mood-tags");
+    if (!moodTagsContainer) return;
+
+    if (this.selectedMood) {
+      const tags = this.getMoodTags(this.selectedMood);
+      moodTagsContainer.innerHTML = tags
+        .map(
+          (tag) => `<button class="tag-btn" data-tag="${tag}">${tag}</button>`
+        )
+        .join("");
+    } else {
+      moodTagsContainer.innerHTML = "";
+    }
   }
 
   showSaveIndicator() {

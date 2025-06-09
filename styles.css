@@ -309,6 +309,27 @@ h3 {
     line-height: 1.4;
 }
 
+.mood-entry-tags {
+    margin-top: 8px;
+    padding: 8px 0;
+    border-top: 2px solid #000000;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mood-entry-tag {
+    background: #000000;
+    color: #ffffff;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 2px solid #000000;
+    box-shadow: 2px 2px 0px #000000;
+}
+
 .mood-entry-date {
     font-weight: 900;
     color: #000000;
@@ -495,6 +516,18 @@ h3 {
         font-size: 0.8rem;
         border-top-width: 1px;
     }
+    
+    .mood-entry-tags {
+        border-top-width: 1px;
+        gap: 4px;
+    }
+    
+    .mood-entry-tag {
+        font-size: 0.6rem;
+        padding: 3px 6px;
+        border-width: 1px;
+        box-shadow: 1px 1px 0px #000000;
+    }
 
     .bottom-navigation {
         padding: 12px 15px;
@@ -658,5 +691,90 @@ h3 {
     .thoughts-input:focus {
         box-shadow: 5px 5px 0px #000000;
         border-width: 4px;
+    }
+}
+
+/* Tags Section */
+.tags-section {
+    margin-top: 25px;
+    text-align: left;
+}
+
+.tags-label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 900;
+    color: #000000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.tags-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.core-tags, .mood-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-btn {
+    background: #ffffff;
+    color: #000000;
+    border: 3px solid #000000;
+    border-radius: 0;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 3px 3px 0px #000000;
+    user-select: none;
+}
+
+.tag-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #000000;
+}
+
+.tag-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0px #000000;
+}
+
+.tag-btn.selected {
+    background: #000000;
+    color: #ffffff;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #000000;
+    border-width: 4px;
+}
+
+@media (max-width: 480px) {
+    .tags-section {
+        margin-top: 20px;
+    }
+    
+    .tag-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        border-width: 2px;
+        box-shadow: 2px 2px 0px #000000;
+    }
+    
+    .tag-btn:hover {
+        box-shadow: 3px 3px 0px #000000;
+    }
+    
+    .tag-btn.selected {
+        border-width: 3px;
+        box-shadow: 4px 4px 0px #000000;
     }
 }

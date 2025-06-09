@@ -60,6 +60,19 @@
                             <label for="thoughts-input" class="thoughts-label">Thoughts & Notes</label>
                             <textarea id="thoughts-input" class="thoughts-input" placeholder="What's on your mind today..."></textarea>
                         </div>
+                        
+                        <div class="tags-section">
+                            <div class="tags-container">
+                                <!-- Core activities (always visible) -->
+                                <div class="core-tags">
+                                    <button class="tag-btn" data-tag="meditation">Meditation</button>
+                                    <button class="tag-btn" data-tag="sports">Sports</button>
+                                </div>
+                                
+                                <!-- Mood-specific tags (dynamic) -->
+                                <div id="mood-tags" class="mood-tags"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
