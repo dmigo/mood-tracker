@@ -11,9 +11,10 @@ class MoodTracker {
   init() {
     this.bindEvents();
     this.updateDateDisplay();
-    this.loadMoodHistory();
     this.checkSelectedDateMood();
     this.updateTheme();
+    // Initialize with mood view
+    this.switchView("mood");
   }
 
   bindEvents() {
@@ -222,7 +223,6 @@ class MoodTracker {
 
     localStorage.setItem("mood-tracker-data", JSON.stringify(moods));
 
-    this.loadMoodHistory();
     this.showSaveIndicator();
   }
 
@@ -231,55 +231,193 @@ class MoodTracker {
     return stored ? JSON.parse(stored) : [];
   }
 
-  loadMoodHistory() {
+  loadMoodChart() {
     const moods = this.getMoods();
-    const moodList = document.getElementById("mood-list");
+    const chartWrapper = document.querySelector('.chart-wrapper');
+    const noEntriesElement = document.getElementById('no-chart-entries');
 
     if (moods.length === 0) {
-      moodList.innerHTML =
-        '<p class="no-entries">No mood entries yet. Start by rating your mood above!</p>';
+      chartWrapper.style.display = 'none';
+      noEntriesElement.style.display = 'block';
       return;
     }
 
-    const sortedMoods = moods.sort((a, b) => b.timestamp - a.timestamp);
+    chartWrapper.style.display = 'flex';
+    noEntriesElement.style.display = 'none';
 
-    moodList.innerHTML = sortedMoods
-      .map((mood) => {
-        const date = new Date(mood.timestamp).toLocaleDateString("en-US", {
-          weekday: "short",
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        });
+    // Generate last 14 days of data for chart
+    const days = this.generateChartDays(14);
+    const chartData = this.prepareChartData(moods, days);
+    
+    this.renderChart(chartData);
+  }
 
-        const thoughtsDisplay = mood.thoughts
-          ? `<div class="mood-entry-thoughts">${mood.thoughts}</div>`
-          : "";
+  generateChartDays(numDays) {
+    const days = [];
+    const today = new Date();
+    
+    for (let i = numDays - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      days.push({
+        date: date,
+        dateString: date.toDateString(),
+        isToday: i === 0
+      });
+    }
+    
+    return days;
+  }
 
-        const tagsDisplay =
-          mood.tags && mood.tags.length > 0
-            ? `<div class="mood-entry-tags">
-               ${mood.tags
-                 .map((tag) => `<span class="mood-entry-tag">${tag}</span>`)
-                 .join("")}
-             </div>`
-            : "";
+  prepareChartData(moods, days) {
+    const isMobile = window.innerWidth <= 480;
+    const dayWidth = isMobile ? 70 : 85.7;
+    const dayHeight = isMobile ? 50 : 60;
+    
+    return days.map((day, index) => {
+      const mood = moods.find(m => m.date === day.dateString);
+      return {
+        ...day,
+        mood: mood ? mood.mood : null,
+        moodData: mood,
+        x: index * dayWidth,
+        y: mood ? (5 - mood.mood) * dayHeight : null // Invert Y (mood 5 = top, mood 1 = bottom)
+      };
+    });
+  }
 
-        return `
-                <div class="mood-entry-item">
-                    <div class="mood-entry-header">
-                        <span class="mood-entry-date">${date}</span>
-                        <div class="mood-entry-value">
-                            <span>${this.getMoodEmoji(mood.mood)}</span>
-                            <span>${this.getMoodLabel(mood.mood)}</span>
-                        </div>
-                    </div>
-                    ${thoughtsDisplay}
-                    ${tagsDisplay}
-                </div>
-            `;
-      })
-      .join("");
+  renderChart(chartData) {
+    this.renderXAxis(chartData);
+    this.renderMoodPoints(chartData);
+    this.renderConnectionLine(chartData);
+    this.renderTodayIndicator(chartData);
+    this.scrollToToday();
+  }
+
+  scrollToToday() {
+    const chartGrid = document.querySelector('.chart-grid');
+    const isMobile = window.innerWidth <= 480;
+    const dayWidth = isMobile ? 70 : 85.7;
+    
+    // Scroll to show the last 7-8 days (with today at the right edge)
+    const scrollPosition = chartGrid.scrollWidth - chartGrid.clientWidth;
+    chartGrid.scrollLeft = scrollPosition;
+  }
+
+  renderXAxis(chartData) {
+    const xAxis = document.getElementById('x-axis');
+    xAxis.innerHTML = chartData.map(day => {
+      const dateLabel = day.isToday ? 'TODAY' : 
+        day.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+      
+      return `<div class="date-label ${day.isToday ? 'today' : ''}">${dateLabel}</div>`;
+    }).join('');
+  }
+
+  renderMoodPoints(chartData) {
+    const isMobile = window.innerWidth <= 480;
+    const dayWidth = isMobile ? 70 : 85.7;
+    const offsetX = dayWidth / 2;
+    const offsetY = isMobile ? 25 : 30;
+    
+    // Remove existing mood points
+    const chartContent = document.getElementById('chart-content');
+    const existingPoints = chartContent.querySelectorAll('.mood-point');
+    existingPoints.forEach(point => point.remove());
+    
+    // Add new mood points directly to chart content
+    chartData
+      .filter(day => day.mood !== null)
+      .forEach(day => {
+        const emoji = this.getMoodEmoji(day.mood);
+        const moodPoint = document.createElement('div');
+        moodPoint.className = 'mood-point';
+        moodPoint.style.left = `${day.x + offsetX}px`;
+        moodPoint.style.top = `${day.y + offsetY}px`;
+        moodPoint.setAttribute('data-date', day.dateString);
+        moodPoint.setAttribute('data-mood', day.mood);
+        moodPoint.title = `${day.isToday ? 'Today' : day.date.toLocaleDateString()}: ${this.getMoodLabel(day.mood)}`;
+        moodPoint.textContent = emoji;
+        
+        chartContent.appendChild(moodPoint);
+      });
+    
+    // Add click event listeners to mood points
+    this.setupMoodPointInteractions();
+  }
+
+  renderConnectionLine(chartData) {
+    const moodPointsWithData = chartData.filter(day => day.mood !== null);
+    
+    if (moodPointsWithData.length < 2) return;
+
+    const isMobile = window.innerWidth <= 480;
+    const dayWidth = isMobile ? 70 : 85.7;
+    const offsetX = dayWidth / 2;
+    const offsetY = isMobile ? 25 : 30;
+
+    const pathData = moodPointsWithData.map((day, index) => {
+      const command = index === 0 ? 'M' : 'L';
+      return `${command} ${day.x + offsetX} ${day.y + offsetY}`;
+    }).join(' ');
+
+    const path = document.getElementById('mood-path');
+    path.setAttribute('d', pathData);
+  }
+
+  renderTodayIndicator(chartData) {
+    const todayData = chartData.find(day => day.isToday);
+    const todayIndicator = document.querySelector('.today-indicator');
+    
+    if (todayData) {
+      const isMobile = window.innerWidth <= 480;
+      const dayWidth = isMobile ? 70 : 85.7;
+      const offsetX = dayWidth / 2;
+      
+      todayIndicator.style.left = `${todayData.x + offsetX}px`;
+      todayIndicator.style.display = 'block';
+    }
+  }
+
+  setupMoodPointInteractions() {
+    const moodPoints = document.querySelectorAll('.mood-point');
+    
+    moodPoints.forEach(point => {
+      point.addEventListener('click', (e) => {
+        const dateString = e.target.getAttribute('data-date');
+        const mood = parseInt(e.target.getAttribute('data-mood'));
+        const moods = this.getMoods();
+        const moodData = moods.find(m => m.date === dateString);
+        
+        if (moodData) {
+          this.showMoodDetails(moodData);
+        }
+      });
+    });
+  }
+
+  showMoodDetails(moodData) {
+    const date = new Date(moodData.timestamp).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric', 
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    const emoji = this.getMoodEmoji(moodData.mood);
+    const label = this.getMoodLabel(moodData.mood);
+    
+    let details = `${emoji} ${label} - ${date}`;
+    
+    if (moodData.thoughts) {
+      details += `\n\nThoughts: ${moodData.thoughts}`;
+    }
+    
+    if (moodData.tags && moodData.tags.length > 0) {
+      details += `\n\nTags: ${moodData.tags.join(', ')}`;
+    }
+    
+    alert(details);
   }
 
   checkSelectedDateMood() {
@@ -406,7 +544,7 @@ class MoodTracker {
       moodColor = `var(--mood-${this.selectedMood})`;
       moodValue = this.selectedMood;
     } else {
-      // No mood selected, use neutral color
+      // No mood selected, use unselected color
       moodColor = "var(--mood-unselected)";
       moodValue = 3; // Default to neutral
     }
@@ -450,15 +588,26 @@ class MoodTracker {
       document.getElementById("history-view-btn").classList.add("active");
       document.getElementById("history-view").classList.add("active");
       document.getElementById("mood-view").classList.remove("active");
-      this.loadMoodHistory(); // Refresh history when switching to it
+      this.loadMoodChart(); // Refresh chart when switching to it
     }
 
     // Update theme based on current view
     if (view === "history") {
-      // In history view, show neutral theme
+      // In history view, show today's mood theme
+      const todayString = new Date().toDateString();
+      const moods = this.getMoods();
+      const todayMood = moods.find((m) => m.date === todayString);
+      
+      let historyColor;
+      if (todayMood && todayMood.mood) {
+        historyColor = `var(--mood-${todayMood.mood})`;
+      } else {
+        historyColor = "var(--mood-unselected)";
+      }
+      
       document.documentElement.style.setProperty(
         "--current-mood-color",
-        "var(--mood-unselected)"
+        historyColor
       );
       // Hide bottom navigation in history view
       document.querySelector(".bottom-navigation").style.display = "none";
