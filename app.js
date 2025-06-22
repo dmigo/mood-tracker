@@ -381,18 +381,13 @@ class MoodTracker {
   showSaveIndicator() {
     const saveIndicator = document.getElementById("save-indicator");
 
-    // Show loading state
-    saveIndicator.className = "save-indicator visible loading";
+    // Show floppy disk icon
+    saveIndicator.className = "save-indicator visible";
 
-    // After short delay, show saved state
+    // Hide after 1.5 seconds
     setTimeout(() => {
-      saveIndicator.className = "save-indicator visible saved";
-
-      // Hide after 2 seconds
-      setTimeout(() => {
-        saveIndicator.className = "save-indicator hidden";
-      }, 2000);
-    }, 300);
+      saveIndicator.className = "save-indicator hidden";
+    }, 1500);
   }
 
   updateTheme() {
